@@ -1,181 +1,41 @@
 ===============================================================================
-                    CONFIGURACIÓN SECURITY GROUP AWS
-                    Sistema NPS - nps.grupopcr.com.pa
+                    CONFIGURACIÓN AWS SECURITY GROUP
+                    SOLUCIÓN INMEDIATA - PUERTO 80
 ===============================================================================
 
-PROBLEMA IDENTIFICADO:
-- La aplicación funciona correctamente en el servidor (localhost responde HTTP 200)
-- El acceso externo está bloqueado por el Security Group de AWS
-- Necesitamos permitir tráfico en puertos 80 y 8080
+🎯 PROBLEMA ACTUAL:
+- phpMyAdmin funciona (puerto 8080 abierto)
+- Aplicación NPS no accesible (puerto 80 bloqueado)
+- Necesitas agregar regla HTTP en AWS Security Group
 
 ===============================================================================
-                    PASOS PARA CONFIGURAR SECURITY GROUP
+                    PASOS INMEDIATOS
 ===============================================================================
 
-PASO 1: ACCEDER A AWS CONSOLE
+PASO 1: AWS CONSOLE
 1. Ve a https://console.aws.amazon.com
-2. Inicia sesión con tus credenciales
-3. Asegúrate de estar en la región correcta (us-east-1, us-west-2, etc.)
+2. EC2 → Instances → Tu instancia (54.94.232.102)
+3. Haz clic en el Security Group
 
-PASO 2: NAVEGAR A EC2
-1. En el menú de servicios, busca "EC2"
-2. Haz clic en "EC2" para acceder al servicio
-3. En el panel izquierdo, verás "Instances (running)"
+PASO 2: AGREGAR REGLA HTTP
+1. "Inbound rules" → "Edit inbound rules"
+2. "Add rule"
+3. Configurar:
+   - Type: HTTP
+   - Protocol: TCP
+   - Port: 80
+   - Source: 0.0.0.0/0
+   - Description: Allow HTTP traffic
+4. "Save rules"
 
-PASO 3: IDENTIFICAR TU INSTANCIA
-1. En la lista de instancias, busca tu instancia (IP: 54.94.232.102)
-2. Haz clic en el ID de la instancia para seleccionarla
-3. En la pestaña inferior, busca la sección "Security"
+PASO 3: VERIFICAR
+Tu Security Group debe tener:
+✅ HTTP (80) - 0.0.0.0/0
+✅ Custom TCP (8080) - 0.0.0.0/0  
+✅ SSH (22) - 0.0.0.0/0
 
-PASO 4: ACCEDER AL SECURITY GROUP
-1. En la sección "Security", verás "Security groups"
-2. Haz clic en el enlace del Security Group (ej: sg-xxxxxxxxx)
-3. Esto te llevará a la página de configuración del Security Group
+PASO 4: PROBAR
+- http://nps.grupopcr.com.pa
+- http://54.94.232.102
 
-PASO 5: EDITAR INBOUND RULES
-1. En la página del Security Group, ve a la pestaña "Inbound rules"
-2. Haz clic en el botón "Edit inbound rules"
-3. Verás una tabla con las reglas actuales
-
-PASO 6: AGREGAR REGLAS NECESARIAS
-Agrega las siguientes reglas (una por una):
-
-REGLA 1 - HTTP (Puerto 80):
-- Type: HTTP
-- Protocol: TCP
-- Port range: 80
-- Source: 0.0.0.0/0
-- Description: HTTP Access for NPS System
-
-REGLA 2 - phpMyAdmin (Puerto 8080):
-- Type: Custom TCP
-- Protocol: TCP
-- Port range: 8080
-- Source: 0.0.0.0/0
-- Description: phpMyAdmin Access
-
-REGLA 3 - SSH (Puerto 22):
-- Type: SSH
-- Protocol: TCP
-- Port range: 22
-- Source: 0.0.0.0/0 (o tu IP específica para mayor seguridad)
-- Description: SSH Access
-
-PASO 7: GUARDAR CAMBIOS
-1. Haz clic en "Save rules"
-2. Espera unos segundos para que se apliquen los cambios
-3. Verás un mensaje de confirmación
-
-PASO 8: VERIFICAR CONFIGURACIÓN
-1. Regresa a la pestaña "Inbound rules"
-2. Verifica que las reglas estén presentes:
-   - HTTP (80) - 0.0.0.0/0
-   - Custom TCP (8080) - 0.0.0.0/0
-   - SSH (22) - 0.0.0.0/0
-
-===============================================================================
-                    PRUEBAS DESPUÉS DE LA CONFIGURACIÓN
-===============================================================================
-
-PASO 9: PROBAR ACCESO
-1. Abre tu navegador web
-2. Prueba acceder a:
-   - http://nps.grupopcr.com.pa
-   - http://nps.grupopcr.com.pa:8080
-   - http://54.94.232.102
-   - http://54.94.232.102:8080
-
-PASO 10: VERIFICAR DESDE EL SERVIDOR
-En tu servidor, ejecuta:
-```bash
-# Verificar puertos
-ss -tlnp | grep :80
-ss -tlnp | grep :8080
-
-# Probar acceso local
-curl -I http://localhost
-curl -I http://localhost:8080
-```
-
-===============================================================================
-                    CREDENCIALES DE ACCESO
-===============================================================================
-
-APLICACIÓN NPS:
-- URL: http://nps.grupopcr.com.pa
-- Admin: admin@nps.com
-- Contraseña: password
-
-phpMyAdmin:
-- URL: http://nps.grupopcr.com.pa:8080
-- Usuario: nps_user
-- Contraseña: elchamo1787$$$
-
-===============================================================================
-                    COMANDOS ÚTILES PARA MONITOREO
-===============================================================================
-
-# Ver estado de contenedores
-docker ps
-
-# Ver logs en tiempo real
-docker-compose -f docker-compose.prod.yml logs -f
-
-# Reiniciar servicios
-docker-compose -f docker-compose.prod.yml restart
-
-# Detener servicios
-docker-compose -f docker-compose.prod.yml down
-
-# Ver logs específicos
-docker-compose -f docker-compose.prod.yml logs nps-app
-docker-compose -f docker-compose.prod.yml logs nps-db
-docker-compose -f docker-compose.prod.yml logs phpmyadmin
-
-===============================================================================
-                    TROUBLESHOOTING
-===============================================================================
-
-SI NO FUNCIONA DESPUÉS DE CONFIGURAR SECURITY GROUP:
-
-1. Verificar que las reglas se guardaron correctamente
-2. Esperar 1-2 minutos para que se propaguen los cambios
-3. Verificar que no hay firewall local bloqueando:
-   ```bash
-   sudo ufw status
-   ```
-
-4. Verificar que los contenedores estén corriendo:
-   ```bash
-   docker ps
-   ```
-
-5. Verificar logs de la aplicación:
-   ```bash
-   docker-compose -f docker-compose.prod.yml logs nps-app
-   ```
-
-===============================================================================
-                    NOTAS IMPORTANTES
-===============================================================================
-
-- El Security Group es la causa más común de problemas de conectividad en AWS
-- Las reglas se aplican inmediatamente después de guardar
-- Para mayor seguridad, considera restringir el acceso SSH a tu IP específica
-- El puerto 80 es para la aplicación NPS
-- El puerto 8080 es para phpMyAdmin
-- El puerto 22 es para acceso SSH
-
-===============================================================================
-                    CONTACTO Y SOPORTE
-===============================================================================
-
-Si tienes problemas después de seguir estos pasos:
-1. Verifica que las reglas del Security Group estén correctas
-2. Revisa los logs de la aplicación
-3. Confirma que los contenedores estén corriendo
-4. Prueba acceder desde diferentes navegadores/dispositivos
-
-Fecha de creación: 31 de Julio, 2025
-Servidor: 54.94.232.102
-Dominio: nps.grupopcr.com.pa 
+=============================================================================== 
