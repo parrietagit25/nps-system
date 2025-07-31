@@ -10,10 +10,12 @@ RUN apt-get update && apt-get install -y \
     libxml2-dev \
     zip \
     unzip \
+    default-mysql-client \
     && docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd
 
-# Habilitar mod_rewrite para Apache
+# Habilitar mod_rewrite y mod_headers para Apache
 RUN a2enmod rewrite
+RUN a2enmod headers
 
 # Establecer directorio de trabajo
 WORKDIR /var/www/html
@@ -43,4 +45,4 @@ RUN chmod +x /usr/local/bin/entrypoint.sh
 EXPOSE 80
 
 # Comando por defecto
-CMD ["/usr/local/bin/entrypoint.sh"] 
+CMD ["/usr/local/bin/entrypoint.sh"]
