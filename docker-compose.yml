@@ -1,0 +1,66 @@
+version: '3.8'
+
+services:
+  # Servicio de la aplicación NPS
+  nps-app:
+    build: .
+    container_name: nps-app
+    ports:
+      - "80:80"
+    environment:
+      - DB_HOST=nps-db
+      - DB_NAME=nps_system
+      - DB_USER=nps_user
+      - DB_PASS=nps_password
+      - APP_ENV=production
+      - DEBUG=false
+    volumes:
+      - ./uploads:/var/www/html/uploads
+      - ./logs:/var/www/html/logs
+    depends_on:
+      - nps-db
+    restart: unless-stopped
+    networks:
+      - nps-network
+
+  # Servicio de base de datos MySQL
+  nps-db:
+    image: mysql:8.0
+    container_name: nps-db
+    environment:
+      - MYSQL_ROOT_PASSWORD=root_password_change_this
+      - MYSQL_DATABASE=nps_system
+      - MYSQL_USER=nps_user
+      - MYSQL_PASSWORD=nps_password
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./database/schema.sql:/docker-entrypoint-initdb.d/schema.sql
+    ports:
+      - "3306:3306"
+    restart: unless-stopped
+    networks:
+      - nps-network
+
+  # Servicio de phpMyAdmin (opcional, para administrar la BD)
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: nps-phpmyadmin
+    environment:
+      - PMA_HOST=nps-db
+      - PMA_PORT=3306
+      - PMA_USER=nps_user
+      - PMA_PASSWORD=nps_password
+    ports:
+      - "8080:80"
+    depends_on:
+      - nps-db
+    restart: unless-stopped
+    networks:
+      - nps-network
+
+volumes:
+  mysql_data:
+
+networks:
+  nps-network:
+    driver: bridge 

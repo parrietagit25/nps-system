@@ -36,4 +36,9 @@ config/database.local.php
 sessions/
 
 # Archivos de upload (si se agregan en el futuro)
-uploads/ 
+uploads/
+
+# Archivos de Docker
+.dockerignore
+docker-compose.override.yml
+docker-compose.prod.yml 
