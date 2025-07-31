@@ -1,0 +1,23 @@
+{
+    "name": "nps-system/nps-survey",
+    "description": "Sistema de encuestas NPS con SendGrid, PHP y MySQL",
+    "type": "project",
+    "require": {
+        "php": ">=7.4",
+        "sendgrid/sendgrid": "^8.0",
+        "vlucas/phpdotenv": "^5.3"
+    },
+    "autoload": {
+        "psr-4": {
+            "NPSSystem\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "NPS System",
+            "email": "admin@nps.com"
+        }
+    ],
+    "minimum-stability": "stable",
+    "prefer-stable": true
+} 

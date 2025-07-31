@@ -1,0 +1,39 @@
+# Archivos de configuración sensibles
+.env
+.env.local
+.env.production
+
+# Archivos de log
+*.log
+logs/
+
+# Archivos temporales
+*.tmp
+*.temp
+*.cache
+
+# Archivos del sistema
+.DS_Store
+Thumbs.db
+
+# Archivos de IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Archivos de dependencias (si no están en vendor)
+node_modules/
+
+# Archivos de backup
+*.bak
+*.backup
+
+# Archivos de configuración local
+config/database.local.php
+
+# Archivos de sesión
+sessions/
+
+# Archivos de upload (si se agregan en el futuro)
+uploads/ 
