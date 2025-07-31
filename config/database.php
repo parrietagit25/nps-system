@@ -61,4 +61,4 @@ class Database {
         return $stmt;
     }
 }
-?> 
+?>
