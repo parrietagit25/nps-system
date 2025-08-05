@@ -37,13 +37,12 @@ if ($_POST) {
         $encuestaId = $nps->crearEncuesta($datos);
         
         if ($encuestaId) {
-            $success = 'Encuesta creada exitosamente. ID: ' . $encuestaId;
-            
             // Si se activó automáticamente, redirigir a agregar destinatarios
             if ($datos['estado'] === 'activa') {
                 header('Location: agregar-destinatarios.php?id=' . $encuestaId);
                 exit;
             }
+            $success = 'Encuesta creada exitosamente. ID: ' . $encuestaId;
         } else {
             $error = 'Error al crear la encuesta.';
         }
