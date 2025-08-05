@@ -1,9 +1,4 @@
 <?php
-// Verificar que no haya salida antes de los headers
-if (headers_sent($filename, $linenum)) {
-    die("Headers already sent in $filename on line $linenum");
-}
-
 session_start();
 require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/../includes/NPSService.php';
