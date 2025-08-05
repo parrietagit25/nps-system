@@ -1,4 +1,9 @@
 <?php
+// Verificar que no haya salida antes de los headers
+if (headers_sent($filename, $linenum)) {
+    die("Headers already sent in $filename on line $linenum");
+}
+
 // Cargar variables de entorno desde .env
 require_once __DIR__ . '/../vendor/autoload.php';
 

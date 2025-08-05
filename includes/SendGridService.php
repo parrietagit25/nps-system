@@ -1,5 +1,14 @@
 <?php
-require_once __DIR__ . '/../vendor/autoload.php';
+// Verificar que no haya salida antes de los headers
+if (headers_sent($filename, $linenum)) {
+    die("Headers already sent in $filename on line $linenum");
+}
+
+// Cargar autoload de manera segura
+if (!class_exists('SendGrid\Mail\Mail')) {
+    require_once __DIR__ . '/../vendor/autoload.php';
+}
+
 require_once __DIR__ . '/../config/database.php';
 
 use SendGrid\Mail\Mail;

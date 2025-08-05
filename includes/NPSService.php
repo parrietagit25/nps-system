@@ -1,4 +1,9 @@
 <?php
+// Verificar que no haya salida antes de los headers
+if (headers_sent($filename, $linenum)) {
+    die("Headers already sent in $filename on line $linenum");
+}
+
 require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/SendGridService.php';
 

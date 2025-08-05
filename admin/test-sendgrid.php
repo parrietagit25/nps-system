@@ -1,6 +1,12 @@
 <?php
+session_start();
 require_once '../config/database.php';
 require_once '../includes/SendGridService.php';
+
+// Verificar que no haya salida antes de los headers
+if (headers_sent($filename, $linenum)) {
+    die("Headers already sent in $filename on line $linenum");
+}
 
 echo "<h2>Test de SendGrid</h2>";
 
