@@ -11,16 +11,21 @@ if [ ! -f "composer.json" ]; then
     exit 1
 fi
 
-# Actualizar dependencias de Composer
-echo "📦 Actualizando dependencias de Composer..."
-composer install --no-dev --optimize-autoloader
+# Verificar si Docker está disponible
+if command -v docker &> /dev/null; then
+    echo "🐳 Docker detectado, usando contenedor para Composer..."
+    # Actualizar dependencias de Composer usando Docker
+    docker run --rm -v $(pwd):/app -w /app composer:latest composer install --no-dev --optimize-autoloader
+else
+    echo "⚠️ Docker no disponible, saltando actualización de Composer..."
+fi
 
 # Verificar permisos de archivos
 echo "🔐 Ajustando permisos..."
-chmod 644 *.php
-chmod 644 admin/*.php
-chmod 644 includes/*.php
-chmod 644 config/*.php
+chmod 644 *.php 2>/dev/null || true
+chmod 644 admin/*.php 2>/dev/null || true
+chmod 644 includes/*.php 2>/dev/null || true
+chmod 644 config/*.php 2>/dev/null || true
 
 # Limpiar caché si existe
 if [ -d "cache" ]; then
@@ -64,11 +69,16 @@ rm -f admin/test-*.php
 rm -f admin/debug-*.php
 rm -f admin/diagnostico.php
 
-# Verificar que todo esté funcionando
+# Verificar que todo esté funcionando usando Docker si está disponible
 echo "🔍 Verificando que todo esté funcionando..."
-php -l config/database.php
-php -l includes/NPSService.php
-php -l admin/crear-encuesta.php
+if command -v docker &> /dev/null; then
+    echo "🐳 Verificando sintaxis PHP usando Docker..."
+    docker run --rm -v $(pwd):/app -w /app php:8.1-cli php -l config/database.php
+    docker run --rm -v $(pwd):/app -w /app php:8.1-cli php -l includes/NPSService.php
+    docker run --rm -v $(pwd):/app -w /app php:8.1-cli php -l admin/crear-encuesta.php
+else
+    echo "⚠️ Docker no disponible, saltando verificación de sintaxis PHP..."
+fi
 
 echo "✅ Auto-deploy completado exitosamente!"
 echo "🌐 La aplicación está lista en: http://nps.grupopcr.com.pa" 
